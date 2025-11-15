@@ -21,12 +21,9 @@ import (
 )
 
 type Server struct {
-	srv        *mcp.Server
-	api        provider
-	provider   Provider
-	wikipedia  *wikipedia.Wikipedia
-	duckduckgo *duckduckgo.DuckDuckGo
-	hackernews *hackernews.HackerNews
+	srv      *mcp.Server
+	api      provider
+	provider Provider
 }
 
 type provider interface {
