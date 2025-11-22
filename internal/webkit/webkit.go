@@ -68,7 +68,7 @@ func New(cfg Config) (web *WebKit, err error) {
 
 	web.browser, err = web.service.WebKit.Launch(
 		playwright.BrowserTypeLaunchOptions{
-			Headless: playwright.Bool(false),
+			Headless: playwright.Bool(true),
 		},
 	)
 	if err != nil {
