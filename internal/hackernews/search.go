@@ -47,7 +47,7 @@ func (api *HackerNews) Search(ctx context.Context, req Search) ([]websearch.Fact
 		req.Tags = api.tags
 	}
 
-	url := api.host
+	var url string
 	switch req.SortBy {
 	case "relevance":
 		url = fmt.Sprintf("%s/search", api.host)
