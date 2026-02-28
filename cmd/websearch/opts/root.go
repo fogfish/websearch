@@ -15,7 +15,12 @@ import (
 	"strings"
 
 	"github.com/TylerBrock/colorjson"
+	_ "github.com/fogfish/websearch/internal/arxiv/adapter"
+	_ "github.com/fogfish/websearch/internal/duckduckgo/adapter"
+	_ "github.com/fogfish/websearch/internal/hackernews/adapter"
 	"github.com/fogfish/websearch/internal/service"
+	_ "github.com/fogfish/websearch/internal/webkit/adapter"
+	_ "github.com/fogfish/websearch/internal/wikipedia/adapter"
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +37,7 @@ func Execute(vsn string) {
 var provider string
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&provider, "provider", "p", string(service.ProviderDuckDuckGo), "search provider to use (wikipedia, duckduckgo)")
+	rootCmd.PersistentFlags().StringVarP(&provider, "provider", "p", "", "search provider to use")
 
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.AddCommand(searchCmd)
@@ -80,7 +85,7 @@ var searchCmd = &cobra.Command{
 }
 
 func search(cmd *cobra.Command, args []string) error {
-	srv, err := service.New(service.Provider(provider))
+	srv, err := service.New(provider)
 	if err != nil {
 		return err
 	}
@@ -108,7 +113,7 @@ var extractCmd = &cobra.Command{
 }
 
 func extract(cmd *cobra.Command, args []string) error {
-	srv, err := service.New(service.Provider(provider))
+	srv, err := service.New(provider)
 	if err != nil {
 		return err
 	}

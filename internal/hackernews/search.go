@@ -19,10 +19,12 @@ import (
 	"github.com/fogfish/websearch"
 )
 
+// See https://hn.algolia.com/api for details on the API.
 type Search struct {
-	Query string
-	Size  int
-	Tags  []string
+	Query  string
+	Size   int
+	Tags   []string
+	SortBy string
 }
 
 type bag struct {
@@ -30,21 +32,32 @@ type bag struct {
 }
 
 type hit struct {
-	Title string `json:"title,omitempty"`
-	Url   string `json:"url,omitempty"`
+	Title   string `json:"title,omitempty"`
+	Url     string `json:"url,omitempty"`
+	Created string `json:"created_at,omitempty"`
+	Text    string `json:"story_text,omitempty"`
 }
 
 func (api *HackerNews) Search(ctx context.Context, req Search) ([]websearch.Fact, error) {
 	if req.Size == 0 {
 		req.Size = 20
 	}
+
 	if len(req.Tags) == 0 {
 		req.Tags = api.tags
 	}
 
+	var url string
+	switch req.SortBy {
+	case "relevance":
+		url = fmt.Sprintf("%s/search", api.host)
+	default:
+		url = fmt.Sprintf("%s/search_by_date", api.host)
+	}
+
 	bag, err := http.IO[bag](api.WithContext(ctx),
 		http.GET(
-			ø.URI(api.host),
+			ø.URI(url),
 			ø.Param("query", req.Query),
 			ø.Param("tags", fmt.Sprintf("(%s)", strings.Join(req.Tags, ","))),
 			ø.Param("hitsPerPage", req.Size),
@@ -59,8 +72,10 @@ func (api *HackerNews) Search(ctx context.Context, req Search) ([]websearch.Fact
 	facts := make([]websearch.Fact, 0, len(bag.Hits))
 	for _, hit := range bag.Hits {
 		fact := websearch.Fact{
-			Title: hit.Title,
-			Url:   hit.Url,
+			Title:   hit.Title,
+			Url:     hit.Url,
+			Date:    hit.Created,
+			Snippet: hit.Text,
 		}
 		facts = append(facts, fact)
 	}

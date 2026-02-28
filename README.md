@@ -23,7 +23,7 @@
 `websearch` is Model Context Protocol (MCP) server to search web content within agentic workflows. It focuse on search within content platform and providers rather than generic search.  
 
 
-## ✨ Features
+## Features
 
 - **Search accross content platforms**: Query across Wikipedia, DuckDuckGo, Hacker News, and others
 - **MCP Integration**: Native support for Model Context Protocol servers
@@ -76,10 +76,10 @@ websearch search --provider wikipedia "artificial intelligence"
 * [Hacker News](https://hn.algolia.com/api)
 * [Wikipedia](https://en.wikipedia.org/w/api.php?action=help&modules=query%2Bsearch)
 * DuckDuckGo Instant Answer API
+* [arxiv.org](https://info.arxiv.org/help/api/index.html)
 
 ### On our future development list
 
-- [arxiv.org](https://info.arxiv.org/help/api/index.html)
 - [OpenLibrary](https://openlibrary.org/developers/api)
 - [CrossRef](https://api.crossref.org)
 - [Semantic Scholar API](https://www.semanticscholar.org/product/api)

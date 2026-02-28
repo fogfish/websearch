@@ -26,7 +26,7 @@ type Config struct {
 func New(cfg Config) (*HackerNews, error) {
 	stack := &HackerNews{
 		Stack: cfg.Stack,
-		host:  "https://hn.algolia.com/api/v1/search_by_date",
+		host:  "https://hn.algolia.com/api/v1",
 		tags:  cfg.Tags,
 	}
 
