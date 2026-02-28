@@ -30,7 +30,7 @@ Start websearch as an MCP server exposing it as a tool to agents.
 }
 
 func serve(cmd *cobra.Command, args []string) error {
-	srv, err := service.New(service.Provider(provider))
+	srv, err := service.New(provider)
 	if err != nil {
 		return err
 	}

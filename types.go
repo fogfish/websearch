@@ -25,4 +25,7 @@ type Fact struct {
 
 	// Url to the resource represented by the fact.
 	Url string `json:"url,omitempty"`
+
+	// Date when the fact was created, published, or indexed.
+	Date string `json:"date,omitempty"`
 }
