@@ -13,14 +13,16 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/TylerBrock/colorjson"
-	_ "github.com/fogfish/websearch/internal/arxiv/adapter"
-	_ "github.com/fogfish/websearch/internal/duckduckgo/adapter"
-	_ "github.com/fogfish/websearch/internal/hackernews/adapter"
-	"github.com/fogfish/websearch/internal/service"
-	_ "github.com/fogfish/websearch/internal/webkit/adapter"
-	_ "github.com/fogfish/websearch/internal/wikipedia/adapter"
+	"github.com/fogfish/websearch"
+	_ "github.com/fogfish/websearch/pkg/arxiv/adapter"
+	_ "github.com/fogfish/websearch/pkg/duckduckgo/adapter"
+	_ "github.com/fogfish/websearch/pkg/hackernews/adapter"
+	_ "github.com/fogfish/websearch/pkg/webkit/adapter"
+	service "github.com/fogfish/websearch/pkg/websearch"
+	_ "github.com/fogfish/websearch/pkg/wikipedia/adapter"
 	"github.com/spf13/cobra"
 )
 
@@ -34,7 +36,11 @@ func Execute(vsn string) {
 	}
 }
 
-var provider string
+var (
+	provider string
+	latest   string
+	format   string
+)
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&provider, "provider", "p", "", "search provider to use")
@@ -42,6 +48,9 @@ func init() {
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.AddCommand(searchCmd)
 	rootCmd.AddCommand(extractCmd)
+
+	searchCmd.Flags().StringVar(&latest, "latest", "", "filter only latest results (1w, 1m, 1y)")
+	searchCmd.Flags().StringVar(&format, "format", "json", "output format (json, text)")
 }
 
 var rootCmd = &cobra.Command{
@@ -74,6 +83,23 @@ func PrintJSON(data any) (err error) {
 	return err
 }
 
+func PrintText(data []websearch.Fact) {
+	for _, fact := range data {
+		var sb strings.Builder
+		fmt.Fprintf(&sb, "## %s\n", fact.Title)
+		if fact.Date != nil {
+			fmt.Fprintf(&sb, "Date: %s\n", fact.Date.Format(time.RFC1123))
+		}
+		fmt.Fprintf(&sb, "URL: %s\n\n", fact.Url)
+		if len(fact.Snippet) > 0 {
+			sb.WriteString(fact.Snippet)
+			sb.WriteString("\n\n")
+		}
+		sb.WriteString("\n")
+		os.Stdout.Write([]byte(sb.String()))
+	}
+}
+
 //------------------------------------------------------------------------------
 
 var searchCmd = &cobra.Command{
@@ -97,7 +123,16 @@ func search(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	PrintJSON(reply)
+	reply.Facts = websearch.OnlyLatest(latest, reply.Facts)
+
+	switch format {
+	case "json":
+		PrintJSON(reply)
+	case "text":
+		PrintText(reply.Facts)
+	default:
+		return fmt.Errorf("unsupported format: %s", format)
+	}
 
 	return nil
 }

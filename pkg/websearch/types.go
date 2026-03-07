@@ -6,7 +6,7 @@
 // https://github.com/fogfish/websearch
 //
 
-package service
+package websearch
 
 import (
 	"context"

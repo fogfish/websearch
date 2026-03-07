@@ -71,7 +71,7 @@ func (api *ArXiv) Search(ctx context.Context, req Search) ([]websearch.Fact, err
 			Title:   item.Title,
 			Snippet: item.Description,
 			Url:     item.Link,
-			Date:    item.Published,
+			// Date:    item.Published,
 		})
 	}
 

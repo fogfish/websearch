@@ -12,6 +12,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/fogfish/gurl/v2/http"
 	ƒ "github.com/fogfish/gurl/v2/http/recv"
@@ -32,10 +33,10 @@ type bag struct {
 }
 
 type hit struct {
-	Title   string `json:"title,omitempty"`
-	Url     string `json:"url,omitempty"`
-	Created string `json:"created_at,omitempty"`
-	Text    string `json:"story_text,omitempty"`
+	Title   string     `json:"title,omitempty"`
+	Url     string     `json:"url,omitempty"`
+	Created *time.Time `json:"created_at,omitempty"`
+	Text    string     `json:"story_text,omitempty"`
 }
 
 func (api *HackerNews) Search(ctx context.Context, req Search) ([]websearch.Fact, error) {
@@ -72,10 +73,12 @@ func (api *HackerNews) Search(ctx context.Context, req Search) ([]websearch.Fact
 	facts := make([]websearch.Fact, 0, len(bag.Hits))
 	for _, hit := range bag.Hits {
 		fact := websearch.Fact{
-			Title:   hit.Title,
-			Url:     hit.Url,
-			Date:    hit.Created,
-			Snippet: hit.Text,
+			Title: hit.Title,
+			Url:   hit.Url,
+			Date:  hit.Created,
+		}
+		if len(hit.Text) > 0 {
+			fact.Snippet, _ = api.html2md.ConvertString(hit.Text)
 		}
 		facts = append(facts, fact)
 	}

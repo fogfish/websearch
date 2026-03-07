@@ -9,13 +9,17 @@
 package hackernews
 
 import (
+	"github.com/JohannesKaufmann/html-to-markdown/v2/converter"
+	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/base"
+	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/commonmark"
 	"github.com/fogfish/gurl/v2/http"
 )
 
 type HackerNews struct {
 	http.Stack
-	host string
-	tags []string
+	host    string
+	tags    []string
+	html2md *converter.Converter
 }
 
 type Config struct {
@@ -37,6 +41,14 @@ func New(cfg Config) (*HackerNews, error) {
 	if len(stack.tags) == 0 {
 		stack.tags = []string{"story"}
 	}
+
+	stack.html2md = converter.NewConverter(
+		converter.WithPlugins(
+			base.NewBasePlugin(),
+			commonmark.NewCommonmarkPlugin(),
+		),
+	)
+	stack.html2md.Register.TagType("img", converter.TagTypeRemove, converter.PriorityStandard)
 
 	return stack, nil
 }

@@ -8,6 +8,8 @@
 
 package websearch
 
+import "time"
+
 // Fact represents a single search result fact.
 // The type acts as denominator for various search engines.
 type Fact struct {
@@ -27,5 +29,32 @@ type Fact struct {
 	Url string `json:"url,omitempty"`
 
 	// Date when the fact was created, published, or indexed.
-	Date string `json:"date,omitempty"`
+	Date *time.Time `json:"date,omitempty"`
+}
+
+func OnlyLatest(wnd string, facts []Fact) []Fact {
+	if len(wnd) == 0 {
+		return facts
+	}
+
+	var dur time.Duration
+	switch wnd[len(wnd)-1] {
+	case 'w':
+		dur = 7 * 24 * time.Hour
+	case 'm':
+		dur = 30 * 24 * time.Hour
+	case 'y':
+		dur = 365 * 24 * time.Hour
+	default:
+		return facts
+	}
+
+	cutoff := time.Now().Add(-dur)
+	var latest []Fact
+	for _, fact := range facts {
+		if fact.Date != nil && fact.Date.After(cutoff) {
+			latest = append(latest, fact)
+		}
+	}
+	return latest
 }

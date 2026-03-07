@@ -6,7 +6,7 @@
 // https://github.com/fogfish/websearch
 //
 
-package service
+package websearch
 
 import (
 	"context"
@@ -36,6 +36,15 @@ type Server struct {
 	api  Provider
 	sapi Searcher
 	eapi Extractor
+}
+
+func Make(id string) *Server {
+	srv, err := New(id)
+	if err != nil {
+		panic(err)
+	}
+
+	return srv
 }
 
 func New(id string) (server *Server, err error) {

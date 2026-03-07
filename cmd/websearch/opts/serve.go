@@ -11,7 +11,7 @@ package opts
 import (
 	"context"
 
-	"github.com/fogfish/websearch/internal/service"
+	service "github.com/fogfish/websearch/pkg/websearch"
 	"github.com/spf13/cobra"
 )
 
