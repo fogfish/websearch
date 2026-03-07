@@ -11,8 +11,8 @@ package adapter
 import (
 	"context"
 
-	"github.com/fogfish/websearch/internal/hackernews"
-	"github.com/fogfish/websearch/internal/service"
+	"github.com/fogfish/websearch/pkg/hackernews"
+	service "github.com/fogfish/websearch/pkg/websearch"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

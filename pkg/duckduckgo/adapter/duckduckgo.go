@@ -11,8 +11,8 @@ package adapter
 import (
 	"context"
 
-	"github.com/fogfish/websearch/internal/duckduckgo"
-	"github.com/fogfish/websearch/internal/service"
+	"github.com/fogfish/websearch/pkg/duckduckgo"
+	service "github.com/fogfish/websearch/pkg/websearch"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

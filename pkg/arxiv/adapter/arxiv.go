@@ -13,8 +13,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fogfish/websearch/internal/arxiv"
-	"github.com/fogfish/websearch/internal/service"
+	"github.com/fogfish/websearch/pkg/arxiv"
+	service "github.com/fogfish/websearch/pkg/websearch"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

@@ -12,6 +12,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/fogfish/gurl/v2/http"
 	ƒ "github.com/fogfish/gurl/v2/http/recv"
@@ -67,11 +68,13 @@ func (api *ArXiv) Search(ctx context.Context, req Search) ([]websearch.Fact, err
 
 	var facts []websearch.Fact
 	for _, item := range feed.Items {
+		published, _ := time.Parse("2006-01-02T15:04:05Z", item.Published)
+
 		facts = append(facts, websearch.Fact{
 			Title:   item.Title,
 			Snippet: item.Description,
 			Url:     item.Link,
-			Date:    item.Published,
+			Date:    &published,
 		})
 	}
 
