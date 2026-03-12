@@ -8,7 +8,10 @@
 
 package websearch
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 // Fact represents a single search result fact.
 // The type acts as denominator for various search engines.
@@ -32,24 +35,60 @@ type Fact struct {
 	Date *time.Time `json:"date,omitempty"`
 }
 
+// toDuration parses a duration string where the last character is the
+// time unit (h, d, w, m, y) and an optional leading integer is the multiplier.
+// For example: "1h", "5w", "2m". Returns 0, false if the string is invalid.
+func toDuration(wnd string) (time.Duration, bool) {
+	if len(wnd) == 0 {
+		return 0, false
+	}
+
+	dim := wnd[len(wnd)-1]
+	numStr := wnd[:len(wnd)-1]
+
+	n := 1
+	if len(numStr) > 0 {
+		var err error
+		n, err = strconv.Atoi(numStr)
+		if err != nil || n <= 0 {
+			return 0, false
+		}
+	}
+
+	var unit time.Duration
+	switch dim {
+	case 'h':
+		unit = time.Hour
+	case 'd':
+		unit = 24 * time.Hour
+	case 'w':
+		unit = 7 * 24 * time.Hour
+	case 'm':
+		unit = 30 * 24 * time.Hour
+	case 'y':
+		unit = 365 * 24 * time.Hour
+	default:
+		return 0, false
+	}
+
+	return time.Duration(n) * unit, true
+}
+
 func OnlyLatest(wnd string, facts []Fact) []Fact {
 	if len(wnd) == 0 {
 		return facts
 	}
 
-	var dur time.Duration
-	switch wnd[len(wnd)-1] {
-	case 'w':
-		dur = 7 * 24 * time.Hour
-	case 'm':
-		dur = 30 * 24 * time.Hour
-	case 'y':
-		dur = 365 * 24 * time.Hour
-	default:
+	dur, ok := toDuration(wnd)
+	if !ok {
 		return facts
 	}
 
 	cutoff := time.Now().Add(-dur)
+	return LatestAfter(cutoff, facts)
+}
+
+func LatestAfter(cutoff time.Time, facts []Fact) []Fact {
 	var latest []Fact
 	for _, fact := range facts {
 		if fact.Date != nil && fact.Date.After(cutoff) {
