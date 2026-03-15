@@ -85,13 +85,13 @@ func OnlyLatest(wnd string, facts []Fact) []Fact {
 	}
 
 	cutoff := time.Now().Add(-dur)
-	return LatestAfter(cutoff, facts)
+	return InRange(cutoff, time.Now(), facts)
 }
 
-func LatestAfter(cutoff time.Time, facts []Fact) []Fact {
+func InRange(after, before time.Time, facts []Fact) []Fact {
 	var latest []Fact
 	for _, fact := range facts {
-		if fact.Date != nil && fact.Date.After(cutoff) {
+		if fact.Date != nil && fact.Date.After(after) && fact.Date.Before(before) {
 			latest = append(latest, fact)
 		}
 	}
