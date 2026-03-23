@@ -38,7 +38,7 @@ type Server struct {
 	eapi Extractor
 }
 
-func Make(id string) *Server {
+func Must(id string) *Server {
 	srv, err := New(id)
 	if err != nil {
 		panic(err)
