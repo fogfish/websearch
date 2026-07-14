@@ -10,6 +10,7 @@ package adapter
 
 import (
 	"context"
+	"os"
 
 	"github.com/fogfish/websearch/pkg/webkit"
 	service "github.com/fogfish/websearch/pkg/websearch"
@@ -17,9 +18,14 @@ import (
 )
 
 func init() {
+	driverDir := os.Getenv("CONFIG_WEBKIT_DRIVER_DIR")
+	if len(driverDir) == 0 {
+		driverDir = "/tmp/websearch"
+	}
+
 	srv, err := webkit.New(webkit.Config{
 		AutoConfig: true,
-		DriverDir:  "/tmp/websearch",
+		DriverDir:  driverDir,
 	})
 	if err != nil {
 		panic(err)
