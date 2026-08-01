@@ -101,11 +101,13 @@ func (api *WebKit) Extract(uri string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	defer bcxt.Close()
 
 	page, err := bcxt.NewPage()
 	if err != nil {
 		return "", err
 	}
+	defer page.Close()
 
 	if _, err = page.Goto(uri); err != nil {
 		return "", err
